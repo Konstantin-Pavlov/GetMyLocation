@@ -35,6 +35,7 @@ class GpsTracker extends  Service implements LocationListener{
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
     // Declaring a Location Manager
     protected LocationManager locationManager;
+
     public GpsTracker(Context context) {
         this.mContext = context;
         getLocation();
@@ -108,6 +109,7 @@ class GpsTracker extends  Service implements LocationListener{
             locationManager.removeUpdates(GpsTracker.this);
         }
     }
+
     /**
      * Function to get latitude
      * */
@@ -118,6 +120,7 @@ class GpsTracker extends  Service implements LocationListener{
         // return latitude
         return latitude;
     }
+
     /**
      * Function to get longitude
      * */
