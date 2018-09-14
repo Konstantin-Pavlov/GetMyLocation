@@ -2,5 +2,7 @@
     <string name="app_name">GetMyLocation</string>
     <string name="coordinates">coordinates</string>
     <string name="get_coordinates">get coordinates</string>
-
+    <string name="latitude">latitude: </string>
+    <string name="longitude">longitude: </string>
+    <string name="failed">failed</string>
 </resources>
