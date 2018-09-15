@@ -15,10 +15,11 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity  {
 
     TextView result;
-    String s, latide, longde;
+    String s, latide, longde,step;
     double latitude,  longitude;
-    long i, before, after ;
-    private GpsTracker gpsTracker;
+    long  before, after ;
+    int i;
+    GpsTracker gpsTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,38 +27,52 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
 
         result = (TextView) findViewById(R.id.coordinates);
+        s = "";
         latide = getString(R.string.latitude);
         longde = getString(R.string.longitude);
-
+        step = getString(R.string.step);
+        i = -1;
     }
+
 
 
     public void get_coordinates (View view) {
 
-        //вариант с использованием текущего времени (работает в java проекте, но не здесь)
-        before = System.currentTimeMillis();
-        i = before;
-        while (true) {
+        //способ отсюда - https://stackoverflow.com/questions/14814714/update-textview-every-second#
+        Thread t = new Thread() {
 
-            after = System.currentTimeMillis();
-            if (after - before > 1000) {
-
-                before = System.currentTimeMillis();
-
-                gpsTracker = new GpsTracker(MainActivity.this);
-                if (gpsTracker.canGetLocation()) {
-                    latitude = gpsTracker.getLatitude();
-                    longitude = gpsTracker.getLongitude();
-                    s += latide + latitude + "\n" + longde + longitude + "\n\n";
-                    display(s);
-
-                } else {
-                    gpsTracker.showSettingsAlert();
-                    s = getString(R.string.failed);
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted() && i++<9) {
+                        Thread.sleep(1000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                coordinatesProcessing(i);
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
                 }
             }
+        };
 
-            if (before - i > 10000) break;
+        t.start();
+
+    }
+
+    public void coordinatesProcessing (int n) {
+        gpsTracker = new GpsTracker(MainActivity.this);
+        if (gpsTracker.canGetLocation()) {
+            latitude = gpsTracker.getLatitude();
+            longitude = gpsTracker.getLongitude();
+            s += n + " " + step + latide + latitude + "\n" + longde + longitude + "\n\n";
+            display(s);
+
+        } else {
+            gpsTracker.showSettingsAlert();
+            s = getString(R.string.failed);
         }
     }
 
@@ -107,3 +122,35 @@ public class MainActivity extends AppCompatActivity  {
             }
         }
         */
+
+
+        /*
+            public void get_coordinates () {
+
+        //вариант с использованием текущего времени (работает в java проекте, но не здесь)
+        //before = System.currentTimeMillis();
+        //i = before;
+        //while (true) {
+
+            //after = System.currentTimeMillis();
+            //if (after - before > 1000) {
+
+                //before = System.currentTimeMillis();
+
+                gpsTracker = new GpsTracker(MainActivity.this);
+                if (gpsTracker.canGetLocation()) {
+                    latitude = gpsTracker.getLatitude();
+                    longitude = gpsTracker.getLongitude();
+                    s += latide + latitude + "\n" + longde + longitude + "\n\n";
+                    display(s);
+
+                } else {
+                    gpsTracker.showSettingsAlert();
+                    s = getString(R.string.failed);
+                }
+           // }
+
+            //if (before - i > 10000) break;
+        //}
+    }
+        * */
